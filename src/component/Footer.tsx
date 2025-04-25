@@ -1,4 +1,5 @@
 import { FaUser, FaRegFileAlt, FaPhoneAlt } from "react-icons/fa"; // Icons from react-icons
+import DarkLight from "./DarkLight";
 
 function Footer() {
   return (
@@ -29,6 +30,7 @@ function Footer() {
           >
             <FaPhoneAlt size={18} /> <span>Contact</span>
           </a>
+          <DarkLight />
         </div>
       </div>
     </footer>
