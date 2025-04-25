@@ -1,123 +1,76 @@
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Briefcase, Clock } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { jobsInfo } from "@/services/api"; // API dan ishlarni olish
 import { Link } from "react-router-dom";
 
-const jobs = [
-  {
-    id: 1,
-    title: "Frontend Developer",
-    company: "TechCorp",
-    location: "New York, NY",
-    type: "Full-time",
-    posted: "2 days ago",
-    status: "Open",
-  },
-  {
-    id: 2,
-    title: "Backend Engineer",
-    company: "DataSystems",
-    location: "Remote",
-    type: "Full-time",
-    posted: "1 week ago",
-    status: "Urgent",
-  },
-  {
-    id: 3,
-    title: "UX/UI Designer",
-    company: "CreativeMinds",
-    location: "San Francisco, CA",
-    type: "Full-time",
-    posted: "3 days ago",
-    status: "Open",
-  },
-];
+interface Job {
+  id: number | string;
+  title: string;
+  company: string;
+  location: string;
+  work_type: string;
+  time: string;
+  salary: string | number;
+  status: string;
+}
 
-const FeaturedJobs = () => {
-  const [filter, setFilter] = useState("all");
+interface FeaturedJobsProps {
+  searchQuery: string; // Search query prop
+}
 
-  const filteredJobs = jobs.filter((job) => {
-    if (filter === "all") return true;
-    if (filter === "exist") return job.status === "Open";
-    if (filter === "unexist") return job.status !== "Open";
-    return true;
-  });
+const FeaturedJobs = ({ searchQuery }: FeaturedJobsProps) => {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      setLoading(true);
+      try {
+        const data = await jobsInfo(); // API dan ishlarni olish
+        // Qidiruv so'zi bilan mos keladigan ishlarni filtrlash
+        const filteredJobs = data.filter((job: Job) =>
+          job.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setJobs(filteredJobs);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Agar qidiruv so'zi mavjud bo'lsa, ishlarni olish
+    if (searchQuery) {
+      fetchJobs();
+    } else {
+      setJobs([]); // Agar qidiruv so'zi bo'lmasa, ishlarni tozalash
+      setLoading(false);
+    }
+  }, [searchQuery]);
+
+  if (loading) return <p className="text-center py-10">Loading jobs...</p>;
+
+  if (jobs.length === 0)
+    return (
+      <p className="text-center py-10">No jobs found matching your search.</p>
+    );
 
   return (
     <section className="px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl font-bold">Featured Jobs</h2>
-          <p className="text-gray-500">Explore our latest job opportunities</p>
-        </div>
-
-        {/* Select variant for filtering */}
-        <Select onValueChange={(value) => setFilter(value)} defaultValue="all">
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="View All Jobs" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">View All Jobs</SelectItem>
-            <SelectItem value="exist">Exist</SelectItem>
-            <SelectItem value="unexist">Unexist</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {filteredJobs.map((job) => (
-          <div
+      <h2 className="text-2xl font-bold mb-6">Featured Jobs</h2>
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
+        {jobs.map((job) => (
+          <Link
+            to={`/jobs/${job.id}`}
             key={job.id}
-            className="border rounded-lg p-5 shadow-sm hover:shadow-md transition"
+            className="border flex flex-col gap-2 rounded-lg p-5 shadow-sm hover:shadow-md transition duration-300 ease-in-out"
           >
-            <div className="flex justify-between items-start gap-4">
-              <div>
-                <h3 className="font-semibold text-lg">{job.title}</h3>
-                <p className="text-gray-500">{job.company}</p>
-              </div>
-              <Badge
-                variant="outline"
-                className={`${
-                  job.status === "Open"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {job.status}
-              </Badge>
-            </div>
-
-            <div className="mt-4 space-y-2 text-gray-600 text-sm">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                {job.location}
-              </div>
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-4 h-4" />
-                {job.type}
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Posted {job.posted}
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <Link
-                to={`/jobs/${job.id}`}
-                className="p-0 h-auto text-sm font-semibold text-blue-500 hover:text-blue-700"
-              >
-                View Details
-              </Link>
-            </div>
-          </div>
+            <h3 className="font-semibold text-lg">{job.title}</h3>
+            <p>{job.company}</p>
+            <p className="text-gray-600">Location: {job.location}</p>
+            <p className="text-gray-500">Work Type: {job.work_type}</p>
+            <p className="text-gray-500">Cost: {job.salary}</p>
+            <p className="text-sm text-gray-400">Posted {job.time}</p>
+          </Link>
         ))}
       </div>
     </section>

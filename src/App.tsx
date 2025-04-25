@@ -17,9 +17,9 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLoyOut />}>
           <Route index element={<Home />} />
-          <Route path="jobs" element={<JobsInformation />} />
-          <Route path="post-job" element={<PostsJob />} />
-          <Route path="jobs/:id" element={<SingleJobInformation />} />
+          <Route path="/jobs" element={<JobsInformation />} />
+          <Route path="/post-job" element={<PostsJob />} />
+          <Route path="/jobs/:id" element={<SingleJobInformation />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/terms" element={<Terms />} />
