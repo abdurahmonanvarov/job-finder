@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Login from "./component/Login";
 import Register from "./component/Register";
+import SingleUser from "./pages/SingleUser";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/post-job" element={<PostsJob />} />
           <Route path="/jobs/:id" element={<SingleJobInformation />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/users/:id" element={<SingleUser />} />
           <Route path="/register" element={<Register />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />

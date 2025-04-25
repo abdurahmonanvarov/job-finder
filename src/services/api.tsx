@@ -24,8 +24,6 @@ export const jobsInfo = async () => {
   return response.data;
 };
 
-// Yana boshqa endpointlar kerak bo‘lsa, ularni ham shu yerga qo‘shish mumkin
-
 export const fetchJobsById = async (id: number): Promise<Job> => {
   const response = await api.get(`/jobs/${id}`);
   return response.data; // 👈 Faqat .data qaytaryapmiz

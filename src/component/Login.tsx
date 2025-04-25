@@ -18,54 +18,40 @@ function Login() {
   } = useForm<LoginData>();
 
   const onSubmit = async (data: LoginData) => {
-    // 1. localStorage'dagi userni olib tekshiramiz
-    const storedUser = localStorage.getItem("user");
-
-    if (!storedUser) {
-      alert("Foydalanuvchi topilmadi. Iltimos, ro'yxatdan o'ting.");
-      return;
-    }
-
-    const parsedUser = JSON.parse(storedUser);
-
-    if (
-      data.username !== parsedUser.username ||
-      data.password !== parsedUser.password
-    ) {
-      alert("Login yoki parol noto'g'ri!");
-      return;
-    }
-
     try {
-      // 2. refresh_token orqali access_token yangilaymiz
-      const refreshToken = localStorage.getItem("refresh_token");
-
-      if (!refreshToken) {
-        alert("Refresh token topilmadi. Iltimos, qayta ro'yxatdan o'ting.");
-        return;
-      }
-
       const response = await axios.post(
-        "https://mustafocoder.pythonanywhere.com/api/token/refresh/",
-        { refresh: refreshToken }
+        "https://mustafocoder.pythonanywhere.com/api/token/",
+        {
+          username: data.username,
+          password: data.password,
+        }
       );
 
-      const { access } = response.data;
+      const { access, refresh } = response.data;
 
-      // 3. access tokenni yangilab localStorage ga yozamiz
+      // Foydalanuvchi ID ni olish uchun hohlagancha extra query qilamiz
+      const userInfo = await axios.get(
+        "https://mustafocoder.pythonanywhere.com/api/get-user/",
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        }
+      );
+
+      const { id, username } = userInfo.data;
+
+      // Barcha ma'lumotlarni localStorage ga saqlaymiz
       localStorage.setItem("token", access);
+      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("user_id", id);
+      localStorage.setItem("username", username);
 
-      console.log("Token muvaffaqiyatli yangilandi:", access);
       alert("Login muvaffaqiyatli!");
-
-      // Masalan, sahifani o'zgartirish:
-      // navigate("/dashboard");
+      console.log("User ID:", id);
     } catch (error: any) {
-      console.error(
-        "Token yangilashda xatolik:",
-        error.response?.data || error.message
-      );
-      alert("Tokenni yangilab bo'lmadi. Iltimos, qayta login qiling.");
+      console.error("Login xatoligi:", error.response?.data || error.message);
+      alert("Login xatoligi. Username yoki parol noto'g'ri bo'lishi mumkin.");
     }
   };
 

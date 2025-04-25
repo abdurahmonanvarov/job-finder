@@ -85,6 +85,7 @@ export default function Register() {
       const registerResponse = await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/register/",
         {
+          id: uuidv4(),
           username: form.username,
           password: form.password,
           first_name: form.first_name,
@@ -97,7 +98,9 @@ export default function Register() {
       );
 
       if (registerResponse.status === 201) {
-        // 2. Token olish
+        const userId = registerResponse.data.id || form.id; // backenddan qaytgan user ID
+
+        // Token olish
         const tokenResponse = await axios.post(
           "https://mustafocoder.pythonanywhere.com/api/token/",
           {
@@ -109,12 +112,13 @@ export default function Register() {
         if (tokenResponse.status === 200) {
           const accessToken = tokenResponse.data.access;
 
-          // LocalStorage ga saqlash
+          // LocalStorage ga saqlaymiz
           localStorage.setItem("token", accessToken);
           localStorage.setItem(
             "user",
-            JSON.stringify({ username: form.username, password: form.password })
+            JSON.stringify({ username: form.username })
           );
+          localStorage.setItem("user_id", userId); // <-- user_id ni alohida saqlaymiz ✅
 
           toast.success("Ma'lumot muvaffaqiyatli saqlandi!");
           setSuccess("Registration and login successful!");

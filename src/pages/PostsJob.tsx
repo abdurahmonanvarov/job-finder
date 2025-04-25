@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { v4 as uuidv4 } from "uuid";
-
+import axios from "axios";
+import { toast } from "react-toastify";
 interface JobForm {
-  id: number | string;
+  id: string;
   title: string;
   company: string;
   description: string;
   location: string;
-  time: string;
+  ish_vaqti: string;
   work_type: string;
   salary: number | string;
 }
@@ -23,7 +24,7 @@ export default function PostsJob() {
     company: "",
     description: "",
     location: "",
-    time: "",
+    ish_vaqti: "",
     work_type: "",
     salary: "",
   });
@@ -36,14 +37,49 @@ export default function PostsJob() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "salary" ? Number(value) : value, // salaryni son sifatida qabul qilamiz
+      [name]: name === "salary" ? Number(value) : value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Job Registered:", form);
-    // API chaqiruvi yoki boshqa amallarni bu yerda qo'shish mumkin
+
+    const userId = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+
+    if (!userId || !token) {
+      toast.error("Foydalanuvchi ID yoki token topilmadi. Qayta login qiling.");
+      return;
+    }
+
+    try {
+      const jobToSend = {
+        ...form,
+        user: Number(userId),
+        created_at: new Date().toISOString(),
+      };
+
+      const response = await axios.post(
+        "https://mustafocoder.pythonanywhere.com/api/jobs/",
+        jobToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      toast.success("Ish muvaffaqiyatli qo‘shildi ✅");
+      console.log("Yuborildi:", response.data);
+    } catch (error: any) {
+      console.error("Xatolik:", error);
+      if (error.response?.status === 401) {
+        toast.error("Avtorizatsiya xatosi ❌ Token noto‘g‘ri yoki eskirgan.");
+      } else {
+        toast.error("Jobni yuborishda xatolik ❌");
+      }
+    }
   };
 
   return (
@@ -57,13 +93,13 @@ export default function PostsJob() {
               { label: "Company", name: "company", type: "text" },
               { label: "Description", name: "description", type: "textarea" },
               { label: "Location", name: "location", type: "text" },
-              { label: "Time", name: "time", type: "datetime-local" },
+              { label: "Ish vaqti", name: "ish_vaqti", type: "text" },
               { label: "Salary", name: "salary", type: "number" },
               {
                 label: "Work Type",
-                name: "workType",
+                name: "work_type",
                 type: "select",
-                options: ["Full-time", "Part-time", "Olline"],
+                options: ["Full-time", "Part-time", "Online"],
               },
             ].map((field) => (
               <div key={field.name}>
@@ -88,6 +124,7 @@ export default function PostsJob() {
                     className="w-full p-2 border border-gray-300 rounded"
                     required
                   >
+                    <option value="">Select...</option>
                     {field.options?.map((option, index) => (
                       <option key={index} value={option}>
                         {option}
@@ -108,7 +145,7 @@ export default function PostsJob() {
             ))}
 
             <Button type="submit" className="w-full">
-              Aply for Job
+              Apply for Job
             </Button>
           </form>
         </CardContent>

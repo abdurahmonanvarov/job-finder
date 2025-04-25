@@ -21,7 +21,7 @@ function Footer() {
             href="/privacy"
             className="flex items-center gap-2 hover:text-primary transition-colors duration-300"
           >
-            <FaUser size={18} /> <span>Profile</span>
+            <FaUser size={18} /> <span>User Informations</span>
           </a>
           <a
             href="/contact"
