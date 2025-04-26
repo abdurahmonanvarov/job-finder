@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 interface JobForm {
   id: string;
   title: string;
@@ -29,6 +30,8 @@ export default function PostsJob() {
     salary: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -43,23 +46,26 @@ export default function PostsJob() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const userId = localStorage.getItem("user_id");
     const token = localStorage.getItem("token");
 
     if (!userId || !token) {
       toast.error("Foydalanuvchi ID yoki token topilmadi. Qayta login qiling.");
+      setLoading(false);
       return;
     }
 
     try {
       const jobToSend = {
         ...form,
+        id: uuidv4(),
         user: Number(userId),
         created_at: new Date().toISOString(),
       };
 
-      const response = await axios.post(
+      await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/jobs/",
         jobToSend,
         {
@@ -71,7 +77,17 @@ export default function PostsJob() {
       );
 
       toast.success("Ish muvaffaqiyatli qo‘shildi ✅");
-      console.log("Yuborildi:", response.data);
+
+      setForm({
+        id: uuidv4(),
+        title: "",
+        company: "",
+        description: "",
+        location: "",
+        ish_vaqti: "",
+        work_type: "",
+        salary: "",
+      });
     } catch (error: any) {
       console.error("Xatolik:", error);
       if (error.response?.status === 401) {
@@ -79,6 +95,8 @@ export default function PostsJob() {
       } else {
         toast.error("Jobni yuborishda xatolik ❌");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,8 +162,8 @@ export default function PostsJob() {
               </div>
             ))}
 
-            <Button type="submit" className="w-full">
-              Apply for Job
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Sending..." : "Apply for Job"}
             </Button>
           </form>
         </CardContent>

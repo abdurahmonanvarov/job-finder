@@ -18,16 +18,33 @@ function Delet({ deletId }: DeletProps) {
     );
     if (!confirmDelete) return;
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Token topilmadi. Qayta login qiling.");
+      return;
+    }
+
     try {
       setLoading(true);
       await axios.delete(
-        `https://mustafocoder.pythonanywhere.com/api/jobs/${deletId}/`
+        `https://mustafocoder.pythonanywhere.com/api/jobs/${deletId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       toast.success("Job deleted successfully.");
-      navigate("/jobs"); // yoki bosh sahifaga
-    } catch (error) {
+      navigate("/jobs");
+    } catch (error: any) {
       console.error("Failed to delete job:", error);
-      alert("Error deleting job.");
+      if (error.response?.status === 401) {
+        toast.error("Avtorizatsiya xatosi. Token noto‘g‘ri yoki eskirgan.");
+      } else if (error.response?.status === 404) {
+        toast.error("Job topilmadi ❌");
+      } else {
+        toast.error("Job o‘chirishda xatolik ❌");
+      }
     } finally {
       setLoading(false);
     }
@@ -37,7 +54,7 @@ function Delet({ deletId }: DeletProps) {
     <div>
       <Button
         variant="destructive"
-        className="w-full"
+        className="w-full cursor-pointer"
         onClick={handleDelete}
         disabled={loading}
       >

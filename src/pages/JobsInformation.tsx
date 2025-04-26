@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { jobsInfo } from "@/services/api"; // API'dan ishlar olish
+import { jobsInfo } from "@/services/api";
 import { Link } from "react-router-dom";
 
 interface Job {

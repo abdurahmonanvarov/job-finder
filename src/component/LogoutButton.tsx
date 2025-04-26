@@ -7,7 +7,6 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // localStorage tozalash
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     toast.success("Siz tizimdan chiqdingiz.");

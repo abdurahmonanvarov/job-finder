@@ -6,7 +6,6 @@ const Hero = ({ onSearch }: { onSearch: (query: string) => void }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
-  // Debounce effect
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);

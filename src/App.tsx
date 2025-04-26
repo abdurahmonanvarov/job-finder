@@ -6,7 +6,6 @@ import JobsInformation from "./pages/JobsInformation";
 import PostsJob from "./pages/PostsJob";
 import SingleJobInformation from "./component/SingleJobInformation";
 import Terms from "./pages/Terms";
-import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import Login from "./component/Login";
 import Register from "./component/Register";
@@ -27,7 +26,6 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/create-user" element={<UserCreate />} />
         </Route>
       </Routes>

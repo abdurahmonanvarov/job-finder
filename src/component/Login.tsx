@@ -29,7 +29,6 @@ function Login() {
 
       const { access, refresh } = response.data;
 
-      // Foydalanuvchi ID ni olish uchun hohlagancha extra query qilamiz
       const userInfo = await axios.get(
         "https://mustafocoder.pythonanywhere.com/api/get-user/",
         {
@@ -41,7 +40,6 @@ function Login() {
 
       const { id, username } = userInfo.data;
 
-      // Barcha ma'lumotlarni localStorage ga saqlaymiz
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("user_id", id);

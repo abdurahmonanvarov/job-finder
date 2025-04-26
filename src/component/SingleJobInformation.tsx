@@ -15,6 +15,7 @@ import { jobsInfo } from "@/services/api";
 import Delet from "./Delet";
 import Edit from "./Edit";
 import ShareModal from "./ShareModal";
+import FillJob from "./FillJob";
 
 interface Job {
   id: number;
@@ -130,8 +131,9 @@ function SingleJobInformation() {
           </p>
         </div>
 
-        <div className="pt-4">
+        <div className="flex flex-col gap-4 pt-4">
           <Delet deletId={job.id} />
+          <FillJob />
         </div>
       </CardContent>
     </Card>

@@ -136,7 +136,6 @@ const SingleUser = () => {
               Emailga yuborish
             </Button>
 
-            {/* DELETE BUTTON */}
             <Button
               onClick={handleDelete}
               variant="destructive"

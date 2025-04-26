@@ -6,14 +6,13 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query); // Qidiruv so'zi o'zgarganda state'ni yangilaymiz
+    setSearchQuery(query);
   };
 
   return (
     <div className="flex flex-col items-center justify-center">
       <Hero onSearch={handleSearch} />
       <FeaturedJobs searchQuery={searchQuery} />{" "}
-      {/* FeaturedJobs componentga searchQuery yuboramiz */}
     </div>
   );
 };

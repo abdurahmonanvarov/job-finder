@@ -13,12 +13,10 @@ function Header() {
   return (
     <header className="bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="text-xl font-bold text-primary dark:text-white">
           JobFinder
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex gap-6">
           {[
             { to: "/", label: "Home", exact: true },
@@ -41,7 +39,6 @@ function Header() {
           ))}
         </nav>
 
-        {/* Desktop Auth Buttons */}
         <div className="hidden md:flex gap-3">
           <Button variant="outline" asChild>
             <Link to="/login">Login</Link>
@@ -51,7 +48,6 @@ function Header() {
           </Button>
         </div>
 
-        {/* Mobile Burger Menu */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -73,7 +69,6 @@ function Header() {
               </SheetHeader>
 
               <div className="mt-6 flex flex-col justify-between h-full">
-                {/* Top nav links */}
                 <div className="flex flex-col gap-4">
                   {[
                     { to: "/", label: "Home", exact: true },
@@ -96,7 +91,6 @@ function Header() {
                   ))}
                 </div>
 
-                {/* Bottom auth buttons */}
                 <div className="mt-10 border-t dark:border-zinc-800 pt-6 flex flex-col gap-3">
                   <Button variant="outline" asChild>
                     <Link to="/login">Login</Link>

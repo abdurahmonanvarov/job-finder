@@ -1,4 +1,3 @@
-// src/services/api.ts
 import axios from "axios";
 interface Job {
   id: number;
@@ -13,12 +12,10 @@ interface Job {
   user: number;
 }
 
-// Bazaviy instance yaratamiz
 const api = axios.create({
-  baseURL: "https://mustafocoder.pythonanywhere.com/api/", // kerakli bazaviy URL
+  baseURL: "https://mustafocoder.pythonanywhere.com/api/",
 });
 
-// Mahsulotlarni olish funksiyasi
 export const jobsInfo = async () => {
   const response = await api.get("/jobs/");
   return response.data;
@@ -28,5 +25,3 @@ export const fetchJobsById = async (id: number): Promise<Job> => {
   const response = await api.get(`/jobs/${id}`);
   return response.data; // 👈 Faqat .data qaytaryapmiz
 };
-
-// Shu tarzda barcha API chaqiruvlarini shu faylga joylashtirasiz
