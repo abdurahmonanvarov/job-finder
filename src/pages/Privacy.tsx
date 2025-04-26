@@ -39,8 +39,8 @@ export default function Privacy() {
   }, []);
 
   return (
-    <div className="px-4 py-8 min-h-screen bg-gray-50">
-      <h2 className="text-3xl font-bold text-center mb-8">
+    <div className="px-4 py-8 min-h-screen bg-gray-50 dark:bg-zinc-900 transition-colors duration-300">
+      <h2 className="text-3xl font-bold text-center mb-8 text-zinc-800 dark:text-white">
         Foydalanuvchilar ro'yxati
       </h2>
 
@@ -53,10 +53,12 @@ export default function Privacy() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {users.map((user) => (
-            <Card key={user.id} className="shadow-md rounded-2xl p-4">
+            <Card
+              key={user.id}
+              className="shadow-md rounded-2xl bg-white dark:bg-zinc-800 text-zinc-800 dark:text-white transition-colors duration-300"
+            >
               <Link to={`/users/${user.id}`}>
-                {" "}
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 p-4">
                   <h3 className="text-xl font-semibold">
                     {user.first_name} {user.last_name}
                   </h3>

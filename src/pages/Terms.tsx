@@ -1,6 +1,6 @@
 function Terms() {
   return (
-    <div className="p-6 max-w-4xl mx-auto text-gray-800">
+    <div className="p-6 max-w-4xl mx-auto text-gray-800 dark:text-white bg-white dark:bg-zinc-900">
       <h1 className="text-2xl font-bold mb-4">Terms and Conditions</h1>
 
       <p className="mb-4">

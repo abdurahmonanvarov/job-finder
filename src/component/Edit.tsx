@@ -66,7 +66,7 @@ function Edit({ editId, open, setClose }: EditProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token"); // <-- to‘g‘ri nom
+    const token = localStorage.getItem("token");
 
     if (!token) {
       console.error("Token topilmadi!");
@@ -102,14 +102,13 @@ function Edit({ editId, open, setClose }: EditProps) {
     }
   };
 
-  if (!open) {
-    return null;
-  }
+  if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-blue-200 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-cyan-700 rounded-2xl text-white p-4 w-full max-w-md mt-24">
-        <form onSubmit={handleSubmit} className="space-y-4 m-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl text-black dark:text-white p-6 w-full max-w-md shadow-xl">
+        <h2 className="text-lg font-semibold mb-4 text-center">Edit Job</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="title">Job Title</Label>
             <Input
@@ -170,8 +169,16 @@ function Edit({ editId, open, setClose }: EditProps) {
             />
           </div>
 
-          <div className="space-x-4">
-            <Button className="w-full block" type="submit">
+          <div className="flex justify-between gap-4 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={setClose}
+              className="w-1/2"
+            >
+              Cancel
+            </Button>
+            <Button type="submit" className="w-1/2">
               Update Job
             </Button>
           </div>

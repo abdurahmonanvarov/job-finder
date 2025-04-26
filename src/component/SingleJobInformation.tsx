@@ -60,38 +60,27 @@ function SingleJobInformation() {
   if (!job)
     return <p className="text-center text-red-500 py-10">Job not found.</p>;
 
-  const handleOpenEdit = () => {
-    setOpenEdit(true); // Modalni ochish
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false); // Modalni yopish
-  };
+  const handleOpenEdit = () => setOpenEdit(true);
+  const handleCloseEdit = () => setOpenEdit(false);
 
   return (
-    <Card className="rounded-2xl shadow-md p-6">
+    <Card className="rounded-2xl shadow-md p-6 bg-white dark:bg-zinc-900 text-black dark:text-white">
       <CardContent className="space-y-6 p-0">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-xl font-bold">{job.title}</h2>
-            <Badge className="mt-1 bg-green-100 text-green-700">Active</Badge>
+            <Badge className="mt-1 bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-200">
+              Active
+            </Badge>
           </div>
-          <div className="flex gap-3 text-xl text-gray-500">
-            <div className="">
-              {/* Edit Icon and Open Modal */}
-              <MdEdit
-                className="hover:text-yellow-500 cursor-pointer"
-                title="Edit"
-                onClick={handleOpenEdit}
-              />
 
-              {/* Edit Modal Component */}
-              <Edit
-                open={openEdit} // Modalning ochilish holati
-                setClose={handleCloseEdit} // Modalni yopish uchun funksiya
-                editId={job.id} // Tahrirlanadigan job ID
-              />
-            </div>
+          <div className="flex gap-3 text-xl text-gray-500 dark:text-zinc-300">
+            <MdEdit
+              className="hover:text-yellow-500 cursor-pointer"
+              title="Edit"
+              onClick={handleOpenEdit}
+            />
+            <Edit open={openEdit} setClose={handleCloseEdit} editId={job.id} />
             <MdFavoriteBorder
               className="hover:text-pink-500 cursor-pointer"
               title="Like"
@@ -103,9 +92,11 @@ function SingleJobInformation() {
           </div>
         </div>
 
-        <div className="space-y-2 text-sm text-gray-600">
+        <div className="space-y-2 text-sm text-gray-600 dark:text-zinc-300">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-black">{job.company}</span>
+            <span className="font-medium text-black dark:text-white">
+              {job.company}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <MdLocationOn className="text-lg" />
@@ -130,12 +121,11 @@ function SingleJobInformation() {
 
         <div>
           <h3 className="font-semibold text-base mb-1">Job Description</h3>
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-gray-700 dark:text-zinc-300 leading-relaxed">
             {job.description}
           </p>
         </div>
 
-        {/* Delete Button */}
         <div className="pt-4">
           <Delet deletId={job.id} />
         </div>
