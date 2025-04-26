@@ -24,6 +24,7 @@ function Header() {
             { to: "/", label: "Home", exact: true },
             { to: "/jobs", label: "Find Jobs" },
             { to: "/post-job", label: "Post a Job" },
+            { to: "/create-user", label: "Create User" },
           ].map(({ to, label, exact }) => (
             <NavLink
               key={to}
@@ -78,6 +79,7 @@ function Header() {
                     { to: "/", label: "Home", exact: true },
                     { to: "/jobs", label: "Find Jobs" },
                     { to: "/post-job", label: "Post a Job" },
+                    { to: "/create-user", Label: "Create User" },
                   ].map(({ to, label, exact }) => (
                     <NavLink
                       key={to}

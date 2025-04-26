@@ -4,18 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios"; // axios kutubxonasini import qilish
-import { toast } from "react-toastify"; // Toast bildirishnomasi kutubxonasi
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface RegisterForm {
-  id: number | string;
-  first_name: string;
-  last_name: string;
+  id: string | number;
   username: string;
-  phone: string;
-  email: string;
-  position: string;
-  age: string | number;
   password: string;
   confirmPassword: string;
 }
@@ -23,45 +17,30 @@ interface RegisterForm {
 export default function Register() {
   const [form, setForm] = useState<RegisterForm>({
     id: uuidv4(),
-    first_name: "",
-    last_name: "",
     username: "",
-    phone: "",
-    email: "",
-    position: "",
-    age: "",
     password: "",
     confirmPassword: "",
   });
 
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
-  const [formErrors, setFormErrors] = useState<any>({}); // Input xatoliklarini saqlash
+  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<any>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "age" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
   const validateForm = () => {
     const errors: any = {};
-    if (!form.first_name) errors.first_name = "First name is required";
-    if (!form.last_name) errors.last_name = "Last name is required";
     if (!form.username) errors.username = "Username is required";
-    if (!form.phone) errors.phone = "Phone is required";
-    if (!form.email) errors.email = "Email is required";
-    if (!form.position) errors.position = "Position is required";
-    if (!form.age) errors.age = "Age is required";
     if (!form.password) errors.password = "Password is required";
     if (!form.confirmPassword)
       errors.confirmPassword = "Confirm password is required";
     if (form.password !== form.confirmPassword)
       errors.confirmPassword = "Passwords do not match";
-
     return errors;
   };
 
@@ -70,8 +49,6 @@ export default function Register() {
 
     setFormErrors({});
     setLoading(true);
-    setError("");
-    setSuccess("");
 
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -81,26 +58,16 @@ export default function Register() {
     }
 
     try {
-      // 1. Register
       const registerResponse = await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/register/",
         {
           id: uuidv4(),
           username: form.username,
           password: form.password,
-          first_name: form.first_name,
-          last_name: form.last_name,
-          phone: form.phone,
-          email: form.email,
-          position: form.position,
-          age: form.age,
         }
       );
 
       if (registerResponse.status === 201) {
-        const userId = registerResponse.data.id || form.id; // backenddan qaytgan user ID
-
-        // Token olish
         const tokenResponse = await axios.post(
           "https://mustafocoder.pythonanywhere.com/api/token/",
           {
@@ -110,30 +77,23 @@ export default function Register() {
         );
 
         if (tokenResponse.status === 200) {
-          const accessToken = tokenResponse.data.access;
-
-          // LocalStorage ga saqlaymiz
-          localStorage.setItem("token", accessToken);
+          localStorage.setItem("token", tokenResponse.data.access);
           localStorage.setItem(
             "user",
             JSON.stringify({ username: form.username })
           );
-          localStorage.setItem("user_id", userId); // <-- user_id ni alohida saqlaymiz ✅
+          localStorage.setItem("user_id", registerResponse.data.id || form.id);
 
-          toast.success("Ma'lumot muvaffaqiyatli saqlandi!");
-          setSuccess("Registration and login successful!");
+          toast.success("Registration and login successful!");
         } else {
-          setError("Token olishda xatolik.");
-          toast.error("Token olishda muammo");
+          toast.error("Failed to get token");
         }
       } else {
-        setError("Ro'yxatdan o'tishda muammo");
-        toast.error("Ro'yxatdan o'tishda xatolik");
+        toast.error("Failed to register user");
       }
-    } catch (err: any) {
-      console.error("❌ Error:", err.response?.data || err.message);
-      setError("Xatolik yuz berdi. Iltimos, qayta urinib ko'ring.");
-      toast.error("Xatolik yuz berdi");
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -141,19 +101,12 @@ export default function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 py-8">
-      <Card className="w-full max-w-lg p-6">
+      <Card className="w-full max-w-md p-6">
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {[
-              // Form field array with validation
-              { label: "First Name", name: "first_name", type: "text" },
-              { label: "Last Name", name: "last_name", type: "text" },
               { label: "Username", name: "username", type: "text" },
-              { label: "Phone", name: "phone", type: "text" },
-              { label: "Email", name: "email", type: "email" },
-              { label: "Position", name: "position", type: "text" },
-              { label: "Age", name: "age", type: "number" },
               { label: "Password", name: "password", type: "password" },
               {
                 label: "Confirm Password",
@@ -171,12 +124,12 @@ export default function Register() {
                   type={field.type}
                   value={(form as any)[field.name]}
                   onChange={handleChange}
-                  required
-                  className={`w-full p-2 border rounded ${
+                  className={`w-full p-2 border ${
                     formErrors[field.name]
                       ? "border-red-500"
                       : "border-gray-300"
-                  }`}
+                  } rounded`}
+                  required
                 />
                 {formErrors[field.name] && (
                   <p className="text-red-500 text-sm">
@@ -186,11 +139,9 @@ export default function Register() {
               </div>
             ))}
             {loading && <p className="text-center">Registering...</p>}
-            {error && <p className="text-red-500 text-center">{error}</p>}
-            {success && <p className="text-green-500 text-center">{success}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              Register
+              {loading ? "Please wait..." : "Register"}
             </Button>
           </form>
         </CardContent>

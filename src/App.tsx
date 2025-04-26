@@ -11,6 +11,7 @@ import Privacy from "./pages/Privacy";
 import Login from "./component/Login";
 import Register from "./component/Register";
 import SingleUser from "./pages/SingleUser";
+import UserCreate from "./pages/UserCreate";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/create-user" element={<UserCreate />} />
         </Route>
       </Routes>
     </Router>

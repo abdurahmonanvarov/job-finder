@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ interface User {
 
 const SingleUser = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [contact, setContact] = useState("");
@@ -54,6 +55,27 @@ const SingleUser = () => {
     if (user) {
       toast.success(`Emailga yuborildi: ${user.username}, ${user.email}`);
       setContact("");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user) return;
+
+    const confirmDelete = window.confirm(
+      `Haqiqatan ham ${user.first_name} ${user.last_name} foydalanuvchisini o'chirmoqchimisiz?`
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `https://mustafocoder.pythonanywhere.com/api/users/${user.id}/`
+      );
+      toast.success("Foydalanuvchi muvaffaqiyatli o'chirildi!");
+      navigate("/privacy");
+    } catch (error) {
+      toast.error("Foydalanuvchini o'chirishda xatolik yuz berdi.");
+      console.error(error);
     }
   };
 
@@ -112,6 +134,15 @@ const SingleUser = () => {
               className="w-full bg-blue-600 text-white hover:bg-blue-700 transition"
             >
               Emailga yuborish
+            </Button>
+
+            {/* DELETE BUTTON */}
+            <Button
+              onClick={handleDelete}
+              variant="destructive"
+              className="w-full mt-3"
+            >
+              Foydalanuvchini o'chirish
             </Button>
           </div>
         </CardContent>
