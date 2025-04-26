@@ -7,12 +7,9 @@ import {
   SheetHeader,
 } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import useTheme from "../hook/useTheme";
 import LogoutButton from "./LogoutButton";
 
 function Header() {
-  const theme = useTheme();
-
   return (
     <header className="bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
