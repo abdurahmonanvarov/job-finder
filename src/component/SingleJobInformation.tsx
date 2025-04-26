@@ -14,6 +14,7 @@ import {
 import { jobsInfo } from "@/services/api";
 import Delet from "./Delet";
 import Edit from "./Edit";
+import ShareModal from "./ShareModal";
 
 interface Job {
   id: number;
@@ -33,6 +34,7 @@ function SingleJobInformation() {
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [openEdit, setOpenEdit] = useState<boolean>(false);
+  const [openShare, setOpenShare] = useState<boolean>(false);
 
   useEffect(() => {
     const getJob = async () => {
@@ -66,6 +68,7 @@ function SingleJobInformation() {
   return (
     <Card className="rounded-2xl shadow-md p-6 bg-white dark:bg-zinc-900 text-black dark:text-white">
       <CardContent className="space-y-6 p-0">
+        <ShareModal open={openShare} onClose={() => setOpenShare(false)} />
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-xl font-bold">{job.title}</h2>
@@ -88,6 +91,7 @@ function SingleJobInformation() {
             <MdShare
               className="hover:text-blue-500 cursor-pointer"
               title="Share"
+              onClick={() => setOpenShare(true)}
             />
           </div>
         </div>
