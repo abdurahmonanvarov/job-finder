@@ -110,7 +110,9 @@ function Edit({ editId, open, setClose }: EditProps) {
         <h2 className="text-lg font-semibold mb-4 text-center">Edit Job</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">Job Title</Label>
+            <Label className="mb-2" htmlFor="title">
+              Job Title
+            </Label>
             <Input
               id="title"
               name="title"
@@ -120,7 +122,9 @@ function Edit({ editId, open, setClose }: EditProps) {
           </div>
 
           <div>
-            <Label htmlFor="company">Company</Label>
+            <Label className="mb-2" htmlFor="company">
+              Company
+            </Label>
             <Input
               id="company"
               name="company"
@@ -130,7 +134,9 @@ function Edit({ editId, open, setClose }: EditProps) {
           </div>
 
           <div>
-            <Label htmlFor="description">Job Description</Label>
+            <Label className="mb-2" htmlFor="description">
+              Job Description
+            </Label>
             <Input
               id="description"
               name="description"
@@ -140,7 +146,9 @@ function Edit({ editId, open, setClose }: EditProps) {
           </div>
 
           <div>
-            <Label htmlFor="location">Location</Label>
+            <Label className="mb-2" htmlFor="location">
+              Location
+            </Label>
             <Input
               id="location"
               name="location"
@@ -150,7 +158,9 @@ function Edit({ editId, open, setClose }: EditProps) {
           </div>
 
           <div>
-            <Label htmlFor="work_type">Work Type</Label>
+            <Label className="mb-2" htmlFor="work_type">
+              Work Type
+            </Label>
             <Input
               id="work_type"
               name="work_type"
@@ -160,7 +170,9 @@ function Edit({ editId, open, setClose }: EditProps) {
           </div>
 
           <div>
-            <Label htmlFor="salary">Salary</Label>
+            <Label className="mb-2" htmlFor="salary">
+              Salary
+            </Label>
             <Input
               id="salary"
               name="salary"
