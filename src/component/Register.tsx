@@ -25,7 +25,7 @@ export default function Register() {
 
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const navigate = useNavigate(); // sahifa o'zgartirish uchun
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -102,9 +102,9 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-100">
-      <Card className="w-full max-w-md p-6 shadow-lg">
-        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-100 dark:bg-gray-900">
+      <Card className="w-full max-w-md p-6 shadow-lg bg-white dark:bg-gray-800">
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 dark:text-blue-400">
           Create an Account
         </h2>
         <CardContent>
@@ -120,7 +120,7 @@ export default function Register() {
             ].map((field) => (
               <div key={field.name}>
                 <Label
-                  className="block mb-1 text-sm font-semibold"
+                  className="block mb-1 text-sm font-semibold text-gray-700 dark:text-gray-300"
                   htmlFor={field.name}
                 >
                   {field.label}
@@ -134,8 +134,8 @@ export default function Register() {
                   className={`w-full p-2 border ${
                     formErrors[field.name]
                       ? "border-red-500"
-                      : "border-gray-300"
-                  } rounded focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                      : "border-gray-300 dark:border-gray-600"
+                  } rounded focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white`}
                   required
                 />
                 {formErrors[field.name] && (
@@ -147,20 +147,25 @@ export default function Register() {
             ))}
 
             {loading && (
-              <p className="text-center text-gray-500">Processing...</p>
+              <p className="text-center text-gray-500 dark:text-gray-400">
+                Processing...
+              </p>
             )}
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-300"
+              className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors duration-300"
               disabled={loading}
             >
               {loading ? "Please wait..." : "Register"}
             </Button>
 
-            <p className="text-center text-sm mt-4">
+            <p className="text-center text-sm mt-4 text-gray-600 dark:text-gray-400">
               Already have an account?{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
+              <a
+                href="/login"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
                 Login
               </a>
             </p>

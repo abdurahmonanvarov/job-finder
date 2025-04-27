@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type LoginData = {
   username: string;
@@ -11,6 +13,7 @@ type LoginData = {
 };
 
 function Login() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -19,13 +22,10 @@ function Login() {
 
   const onSubmit = async (data: LoginData) => {
     try {
-      // 1. Avval eski token va userlarni tozalab yuboramiz
-      localStorage.removeItem("token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user_id");
-      localStorage.removeItem("username");
+      // 1. Eski ma'lumotlarni tozalash
+      localStorage.clear();
 
-      // 2. Login qilish
+      // 2. Login qilish: Token olish
       const response = await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/token/",
         {
@@ -36,7 +36,7 @@ function Login() {
 
       const { access, refresh } = response.data;
 
-      // 3. Yangi token bilan user ma'lumotlarini olish
+      // 3. User haqida ma'lumot olish
       const userInfo = await axios.get(
         "https://mustafocoder.pythonanywhere.com/api/get-user/",
         {
@@ -48,38 +48,22 @@ function Login() {
 
       const { id, username } = userInfo.data;
 
-      // 4. User ma'lumotlarini /api/users/ ga post qilish
-      await axios.post(
-        "https://mustafocoder.pythonanywhere.com/api/users/",
-        {
-          id,
-          username,
-          first_name: "",
-          last_name: "",
-          phone: "",
-          email: "",
-          position: "",
-          age: 0,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        }
-      );
-
-      // 5. LocalStorage ga yangi ma'lumotlarni saqlash
+      // 4. LocalStorage ga saqlash
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("user_id", id);
       localStorage.setItem("username", username);
 
-      alert("Login va user yaratish muvaffaqiyatli bajarildi!");
-      console.log("User ID:", id);
+      // 5. Success notification
+      toast.success("Login muvaffaqiyatli bajarildi!");
+
+      // 6. Home sahifaga redirect qilish
+      navigate("/");
     } catch (error: any) {
       console.error("Login xatoligi:", error.response?.data || error.message);
-      alert(
-        "Login yoki user yaratishda xatolik. Username yoki parol noto'g'ri bo'lishi mumkin."
+      toast.error(
+        error.response?.data?.detail ||
+          "Login xatolik! Username yoki parol noto'g'ri."
       );
     }
   };
