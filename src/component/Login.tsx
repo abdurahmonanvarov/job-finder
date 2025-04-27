@@ -19,6 +19,13 @@ function Login() {
 
   const onSubmit = async (data: LoginData) => {
     try {
+      // 1. Avval eski token va userlarni tozalab yuboramiz
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("username");
+
+      // 2. Login qilish
       const response = await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/token/",
         {
@@ -29,6 +36,7 @@ function Login() {
 
       const { access, refresh } = response.data;
 
+      // 3. Yangi token bilan user ma'lumotlarini olish
       const userInfo = await axios.get(
         "https://mustafocoder.pythonanywhere.com/api/get-user/",
         {
@@ -40,16 +48,39 @@ function Login() {
 
       const { id, username } = userInfo.data;
 
+      // 4. User ma'lumotlarini /api/users/ ga post qilish
+      await axios.post(
+        "https://mustafocoder.pythonanywhere.com/api/users/",
+        {
+          id,
+          username,
+          first_name: "",
+          last_name: "",
+          phone: "",
+          email: "",
+          position: "",
+          age: 0,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        }
+      );
+
+      // 5. LocalStorage ga yangi ma'lumotlarni saqlash
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
       localStorage.setItem("user_id", id);
       localStorage.setItem("username", username);
 
-      alert("Login muvaffaqiyatli!");
+      alert("Login va user yaratish muvaffaqiyatli bajarildi!");
       console.log("User ID:", id);
     } catch (error: any) {
       console.error("Login xatoligi:", error.response?.data || error.message);
-      alert("Login xatoligi. Username yoki parol noto'g'ri bo'lishi mumkin.");
+      alert(
+        "Login yoki user yaratishda xatolik. Username yoki parol noto'g'ri bo'lishi mumkin."
+      );
     }
   };
 

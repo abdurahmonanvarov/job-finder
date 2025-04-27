@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface RegisterForm {
   id: string | number;
@@ -23,7 +24,8 @@ export default function Register() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState<any>({});
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const navigate = useNavigate(); // sahifa o'zgartirish uchun
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,7 +36,7 @@ export default function Register() {
   };
 
   const validateForm = () => {
-    const errors: any = {};
+    const errors: Record<string, string> = {};
     if (!form.username) errors.username = "Username is required";
     if (!form.password) errors.password = "Password is required";
     if (!form.confirmPassword)
@@ -46,7 +48,6 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setFormErrors({});
     setLoading(true);
 
@@ -58,53 +59,56 @@ export default function Register() {
     }
 
     try {
-      const registerResponse = await axios.post(
-        "https://mustafocoder.pythonanywhere.com/api/register/",
-        {
-          id: uuidv4(),
-          username: form.username,
-          password: form.password,
-        }
-      );
+      const registerResponse = await axiosInstance.post("/api/register/", {
+        id: uuidv4(),
+        username: form.username,
+        password: form.password,
+      });
 
       if (registerResponse.status === 201) {
-        const tokenResponse = await axios.post(
-          "https://mustafocoder.pythonanywhere.com/api/token/",
-          {
-            username: form.username,
-            password: form.password,
-          }
-        );
+        toast.success("User registered successfully!");
+
+        const tokenResponse = await axiosInstance.post("/api/token/", {
+          username: form.username,
+          password: form.password,
+        });
 
         if (tokenResponse.status === 200) {
-          localStorage.setItem("token", tokenResponse.data.access);
+          const { access, refresh } = tokenResponse.data;
+
+          localStorage.setItem("token", access);
+          localStorage.setItem("refresh_token", refresh);
           localStorage.setItem(
             "user",
             JSON.stringify({ username: form.username })
           );
           localStorage.setItem("user_id", registerResponse.data.id || form.id);
 
-          toast.success("Registration and login successful!");
+          toast.success("Login successful!");
+
+          navigate("/");
         } else {
-          toast.error("Failed to get token");
+          toast.error("Failed to get authentication token.");
         }
       } else {
-        toast.error("Failed to register user");
+        toast.error("Failed to register user.");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Something went wrong during registration.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-8">
-      <Card className="w-full max-w-md p-6">
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-100">
+      <Card className="w-full max-w-md p-6 shadow-lg">
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
+          Create an Account
+        </h2>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {[
               { label: "Username", name: "username", type: "text" },
               { label: "Password", name: "password", type: "password" },
@@ -115,7 +119,10 @@ export default function Register() {
               },
             ].map((field) => (
               <div key={field.name}>
-                <Label className="mb-2" htmlFor={field.name}>
+                <Label
+                  className="block mb-1 text-sm font-semibold"
+                  htmlFor={field.name}
+                >
                   {field.label}
                 </Label>
                 <Input
@@ -128,21 +135,35 @@ export default function Register() {
                     formErrors[field.name]
                       ? "border-red-500"
                       : "border-gray-300"
-                  } rounded`}
+                  } rounded focus:outline-none focus:ring-2 focus:ring-blue-500`}
                   required
                 />
                 {formErrors[field.name] && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-red-500 text-xs mt-1">
                     {formErrors[field.name]}
                   </p>
                 )}
               </div>
             ))}
-            {loading && <p className="text-center">Registering...</p>}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            {loading && (
+              <p className="text-center text-gray-500">Processing...</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition-colors duration-300"
+              disabled={loading}
+            >
               {loading ? "Please wait..." : "Register"}
             </Button>
+
+            <p className="text-center text-sm mt-4">
+              Already have an account?{" "}
+              <a href="/login" className="text-blue-600 hover:underline">
+                Login
+              </a>
+            </p>
           </form>
         </CardContent>
       </Card>
