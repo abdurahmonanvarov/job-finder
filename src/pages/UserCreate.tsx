@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "react-toastify";
+import { useState } from "react";
 import axios from "axios";
 
 interface UserForm {
@@ -39,57 +39,42 @@ export default function UserCreate() {
 
   const validateForm = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{9,}$/; // kamida 9 ta raqam
+    const phoneRegex = /^[0-9]{9,}$/;
 
-    if (!form.first_name.trim()) {
-      toast.error("First Name is required!");
-      return false;
-    }
-    if (!form.last_name.trim()) {
-      toast.error("Last Name is required!");
-      return false;
-    }
-    if (!form.username.trim()) {
-      toast.error("Username is required!");
-      return false;
-    }
-    if (!form.phone.trim() || !phoneRegex.test(form.phone)) {
-      toast.error("Phone number must be at least 9 digits!");
-      return false;
-    }
-    if (!form.email.trim() || !emailRegex.test(form.email)) {
-      toast.error("Invalid email address!");
-      return false;
-    }
-    if (!form.position.trim()) {
-      toast.error("Position is required!");
-      return false;
-    }
-    if (Number(form.age) < 18) {
-      toast.error("Age must be at least 18!");
-      return false;
-    }
+    if (!form.first_name.trim()) return toast.error("First Name is required!");
+    if (!form.last_name.trim()) return toast.error("Last Name is required!");
+    if (!form.username.trim()) return toast.error("Username is required!");
+    if (!form.phone.trim() || !phoneRegex.test(form.phone))
+      return toast.error("Phone number must be at least 9 digits!");
+    if (!form.email.trim() || !emailRegex.test(form.email))
+      return toast.error("Invalid email address!");
+    if (!form.position.trim()) return toast.error("Position is required!");
+    if (Number(form.age) < 18) return toast.error("Age must be at least 18!");
+
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
 
     try {
       const response = await axios.post(
         "https://mustafocoder.pythonanywhere.com/api/users/",
-        form
+        form,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      if (response.status === 201) {
+      console.log("Server javobi:", response.data);
+
+      if (response.status === 201 || response.status === 200) {
         toast.success("User created successfully!");
-        console.log("✅ User created:", response.data);
         setForm({
           first_name: "",
           last_name: "",
@@ -101,15 +86,18 @@ export default function UserCreate() {
         });
       } else {
         toast.error("Failed to create user.");
-        console.error("❌ Error:", response);
       }
     } catch (error: any) {
+      console.error("Xatolik:", error);
       if (error.response) {
-        toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
+        console.error("Server xatolik javobi:", error.response.data);
+        toast.error(
+          error.response.data.detail ||
+            "Serverda xatolik yuz berdi, yoki unday username ishlatilgan ❌"
+        );
       } else {
         toast.error("Network error!");
       }
-      console.error("❌ Exception:", error);
     } finally {
       setLoading(false);
     }
